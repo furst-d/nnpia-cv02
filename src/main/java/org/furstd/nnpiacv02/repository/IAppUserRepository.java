@@ -13,6 +13,8 @@ public interface IAppUserRepository extends JpaRepository<AppUser, Integer> {
 
     List<AppUser> findByActive(boolean active);
 
+    AppUser findByUsername(String username);
+
     @Query("SELECT au FROM AppUser au JOIN au.roles r WHERE r.name = :roleName")
     List<AppUser> findByRole(@Param("roleName") String roleName);
 }
