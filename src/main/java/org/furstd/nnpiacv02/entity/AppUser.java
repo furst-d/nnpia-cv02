@@ -39,13 +39,13 @@ public class AppUser {
     @OneToMany(mappedBy = "author")
     private final List<Task> tasks = Collections.emptyList();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "app_user_role",
-            joinColumns = @JoinColumn(name = "app_user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
     public AppUser(int id, String username, String password, boolean active, Date creationDate, Date updateDate) {
         this.id = id;
@@ -54,5 +54,9 @@ public class AppUser {
         this.active = active;
         this.creationDate = creationDate;
         this.updateDate = updateDate;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
     }
 }
