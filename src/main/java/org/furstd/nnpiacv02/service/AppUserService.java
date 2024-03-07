@@ -1,22 +1,43 @@
 package org.furstd.nnpiacv02.service;
 
+import lombok.RequiredArgsConstructor;
+import org.furstd.nnpiacv02.dto.AppUserDTO;
+import org.furstd.nnpiacv02.dto.AuthenticationResponseDTO;
 import org.furstd.nnpiacv02.entity.AppUser;
+import org.furstd.nnpiacv02.exceptions.NotFoundException;
 import org.furstd.nnpiacv02.repository.IAppUserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AppUserService implements IAppUserService {
     private final IAppUserRepository appUserRepository;
-
-    public AppUserService(IAppUserRepository appUserRepository) {
-        this.appUserRepository = appUserRepository;
-    }
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public Optional<AppUser> findUser(int id) {
         return appUserRepository.findById(id);
+    }
+
+    @Override
+    public AuthenticationResponseDTO login(AppUserDTO appUserDTO) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(appUserDTO.getUsername(), appUserDTO.getPassword())
+        );
+
+        AppUser appUser = appUserRepository.findByUsername(appUserDTO.getUsername())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        return AuthenticationResponseDTO
+                .builder()
+                .token(jwtService.generateToken(appUser))
+                .user(appUser)
+                .build();
     }
 
     @Override

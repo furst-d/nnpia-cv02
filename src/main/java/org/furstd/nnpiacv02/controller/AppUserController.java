@@ -2,6 +2,7 @@ package org.furstd.nnpiacv02.controller;
 
 import jakarta.validation.Valid;
 import org.furstd.nnpiacv02.dto.AppUserDTO;
+import org.furstd.nnpiacv02.dto.AuthenticationResponseDTO;
 import org.furstd.nnpiacv02.entity.AppUser;
 import org.furstd.nnpiacv02.exceptions.NotFoundException;
 import org.furstd.nnpiacv02.service.IAppUserService;
@@ -26,11 +27,16 @@ public class AppUserController {
                 .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
     }
 
-    @PostMapping
+    @PostMapping("register")
     public ResponseEntity<String> createUser(@Valid @RequestBody AppUserDTO userDTO) {
         AppUser appUser = new AppUser(userDTO.getUsername(), userDTO.getPassword());
         appUserService.createUser(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body("User was created successfully!");
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<AuthenticationResponseDTO> login(@Valid @RequestBody AppUserDTO userDTO) {
+        return ResponseEntity.ok(appUserService.login(userDTO));
     }
 
     @PutMapping("{id}")
@@ -42,7 +48,7 @@ public class AppUserController {
         user.setPassword(userDTO.getPassword());
         appUserService.updateUser(user);
 
-        return ResponseEntity.status(HttpStatus.OK).body("User was updated successfully!");
+        return ResponseEntity.ok("User was updated successfully!");
     }
 
     @DeleteMapping("{id}")

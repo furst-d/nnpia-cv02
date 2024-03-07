@@ -7,13 +7,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IAppUserRepository extends JpaRepository<AppUser, Integer> {
 
     List<AppUser> findByActive(boolean active);
 
-    AppUser findByUsername(String username);
+    Optional<AppUser> findByUsername(String username);
 
     @Query("SELECT au FROM AppUser au JOIN au.roles r WHERE r.name = :roleName")
     List<AppUser> findByRole(@Param("roleName") String roleName);

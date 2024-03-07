@@ -1,11 +1,13 @@
 package org.furstd.nnpiacv02.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Direktivum ddl-auto může nabývat následujících hodnot:
@@ -15,10 +17,11 @@ import java.util.*;
  * - 'create': Vytvoří schéma při startu a zahodí existující schéma.
  * - 'create-drop': Vytvoří schéma při startu a odstraní ho při ukončení aplikace.
  */
-@Getter
-@Entity
+@Data
+@Builder
 @NoArgsConstructor
-public class AppUser {
+@Entity
+public class AppUser implements UserDetails {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
@@ -77,5 +80,32 @@ public class AppUser {
 
     public void addRole(Role role) {
         roles.add(role);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
