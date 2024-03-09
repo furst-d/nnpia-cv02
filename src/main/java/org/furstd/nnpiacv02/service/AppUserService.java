@@ -8,6 +8,7 @@ import org.furstd.nnpiacv02.exceptions.NotFoundException;
 import org.furstd.nnpiacv02.repository.IAppUserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AppUserService implements IAppUserService {
     private final IAppUserRepository appUserRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
@@ -42,6 +44,7 @@ public class AppUserService implements IAppUserService {
 
     @Override
     public void createUser(AppUser appUser) {
+        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         appUserRepository.save(appUser);
     }
 

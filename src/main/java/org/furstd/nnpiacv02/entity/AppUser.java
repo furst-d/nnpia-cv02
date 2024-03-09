@@ -26,9 +26,11 @@ public class AppUser implements UserDetails {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
 
+    @Setter
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Setter
     @Column(nullable = false)
     private String password;
 
@@ -44,7 +46,7 @@ public class AppUser implements UserDetails {
     @ToString.Exclude
     private final List<Task> tasks = Collections.emptyList();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JoinTable(
             name = "app_user_role",
@@ -68,14 +70,6 @@ public class AppUser implements UserDetails {
         this.active = true;
         this.creationDate = new Date();
         this.updateDate = null;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void addRole(Role role) {

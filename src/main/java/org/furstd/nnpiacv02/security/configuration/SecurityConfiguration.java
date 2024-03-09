@@ -21,13 +21,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        final String BASE_PATH = "/api/v1/";
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                BASE_PATH + "app-user/register",
-                                BASE_PATH + "app-user/login"
+                                "/app-user/register",
+                                "/app-user/login"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
